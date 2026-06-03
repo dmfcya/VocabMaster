@@ -1,5 +1,3 @@
-import type { ReactNode } from 'react';
-
 /**
  * Highlights vocabulary words in story content.
  * Replaces <vocab word="X">X</vocab> tags with <mark> elements.

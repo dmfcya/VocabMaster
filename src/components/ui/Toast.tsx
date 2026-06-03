@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState } from 'react';
 import { cn } from '../../utils/cn';
 
 export type ToastType = 'success' | 'error' | 'info';

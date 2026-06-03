@@ -1,6 +1,5 @@
 import { useNotebookStore } from '../../stores/useNotebookStore';
 import { NotebookWordCard } from './NotebookWordCard';
-import { Button } from '../ui/Button';
 
 export function WordSelector() {
   const words = useNotebookStore((s) => s.words);

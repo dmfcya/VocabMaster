@@ -2,7 +2,6 @@ import { useNavigate } from 'react-router-dom';
 import type { Word } from '../../types/word';
 import { CATEGORY_LABELS, CATEGORY_COLORS } from '../../types/word';
 import { AddToNotebookButton } from './AddToNotebookButton';
-import { Button } from '../ui/Button';
 
 interface WordDetailProps {
   word: Word;

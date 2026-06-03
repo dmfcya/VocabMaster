@@ -1,5 +1,5 @@
 import { cn } from '../../utils/cn';
-import { CATEGORY_LABELS, type WordCategory } from '../../types/word';
+import type { WordCategory } from '../../types/word';
 
 const categories: Array<{ key: WordCategory | 'all'; label: string }> = [
   { key: 'all', label: '全部' },
