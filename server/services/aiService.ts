@@ -69,6 +69,7 @@ export interface GeneratedStory {
   title: string;
   content: string;
   wordsUsed: string[];
+  source: 'ai' | 'mock';
 }
 
 export async function generateStory(
@@ -114,7 +115,7 @@ export async function generateStory(
     throw new Error('AI response missing required fields');
   }
 
-  return parsed;
+  return { ...parsed, source: 'ai' as const };
 }
 
 // ─── Mock stories (used when no API key) ───
@@ -291,5 +292,6 @@ function generateMockStory(words: string[], genre: StoryGenre): GeneratedStory {
     title: template.title,
     content: content.trim(),
     wordsUsed: wordsUsed.length >= Math.min(3, words.length) ? wordsUsed : words,
+    source: 'mock' as const,
   };
 }

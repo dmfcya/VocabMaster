@@ -43,4 +43,5 @@ export interface Story {
   language: 'zh' | 'en';
   createdAt: number;
   wordCount: number;
+  source: 'ai' | 'mock';
 }

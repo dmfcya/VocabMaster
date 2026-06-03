@@ -40,6 +40,7 @@ router.post('/generate', async (req: Request, res: Response) => {
       language: language || 'en',
       createdAt: Date.now(),
       wordCount,
+      source: generated.source,
     };
 
     res.json({

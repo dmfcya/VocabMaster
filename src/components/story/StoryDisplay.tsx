@@ -23,6 +23,13 @@ export function StoryDisplay({ story }: StoryDisplayProps) {
             <span>{story.wordCount} words</span>
             <span>·</span>
             <span>{new Date(story.createdAt).toLocaleDateString('zh-CN')}</span>
+            <span>·</span>
+            <span className={story.source === 'ai'
+              ? 'bg-green-100 text-green-700 px-1.5 py-0.5 rounded font-medium'
+              : 'bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded font-medium'
+            }>
+              {story.source === 'ai' ? '🤖 AI' : '📋 Mock'}
+            </span>
           </div>
         </div>
       </div>
