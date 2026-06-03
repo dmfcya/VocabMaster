@@ -42,7 +42,7 @@ app.listen(PORT, () => {
   if (hasStaticFiles) {
     console.log(`   📦 Serving static files from dist/`);
   }
-  if (!process.env.ANTHROPIC_API_KEY) {
-    console.log('   ⚠️  ANTHROPIC_API_KEY not set — using mock story generation');
+  if (!process.env.DEEPSEEK_API_KEY) {
+    console.log('   ⚠️  DEEPSEEK_API_KEY not set — using mock story generation');
   }
 });

@@ -1,9 +1,7 @@
-import Anthropic from '@anthropic-ai/sdk';
 import type { StoryGenre } from '../../src/types/story';
 
-const client = new Anthropic({
-  apiKey: process.env.ANTHROPIC_API_KEY || '',
-});
+const DEEPSEEK_API_KEY = process.env.DEEPSEEK_API_KEY || '';
+const DEEPSEEK_BASE = 'https://api.deepseek.com/v1';
 
 const GENRE_DESCRIPTIONS: Record<StoryGenre, string> = {
   'sci-fi': 'science fiction — futuristic technology, space exploration, alternate realities, AI, robots',
@@ -17,7 +15,10 @@ const GENRE_DESCRIPTIONS: Record<StoryGenre, string> = {
   'daily-life': 'slice of life — everyday situations, relatable experiences, ordinary moments with meaning',
 };
 
-const STORY_STYLE_GUIDE = `
+const SYSTEM_PROMPT = `You are a master storyteller who helps English learners improve their vocabulary through truly memorable short stories.
+
+Your mission: Write a COMPLETE, ENGAGING short story in English (100-300 words) that naturally incorporates ALL of the vocabulary words provided by the user.
+
 STORYTELLING PRINCIPLES:
 - Hook the reader immediately with a strong opening line
 - Every story needs a clear protagonist with a goal or desire
@@ -25,31 +26,25 @@ STORYTELLING PRINCIPLES:
 - End with a satisfying conclusion, twist, or emotional payoff
 - Use vivid sensory details (sights, sounds, smells, textures)
 - Vary sentence length — mix short punchy sentences with longer flowing ones
-- Make the vocabulary words FEEL organic, never like a vocabulary list`;
-
-const SYSTEM_PROMPT = `You are a master storyteller who helps English learners improve their vocabulary through truly memorable short stories.
-
-Your mission: Write a COMPLETE, ENGAGING short story in English (100-300 words) that naturally incorporates ALL of the vocabulary words provided by the user.
-
-${STORY_STYLE_GUIDE}
+- Make the vocabulary words FEEL organic, never like a vocabulary list
 
 CRITICAL REQUIREMENTS:
 1. Write in ENGLISH — this is for English learners, so the entire story must be in English.
-2. You MUST naturally incorporate ALL vocabulary words provided. Do not skip any word. If you absolutely cannot fit one, explain why.
+2. You MUST naturally incorporate ALL vocabulary words provided. Do not skip any word.
 3. For each vocabulary word, wrap it in XML tags: <vocab word="THE_WORD">THE_WORD</vocab>
    Example: "She made the difficult decision to <vocab word="abandon">abandon</vocab> the sinking ship."
-4. The story must be COMPLETE — beginning, middle, end. No cliffhangers unless it's a horror/mystery genre.
+4. The story must be COMPLETE — beginning, middle, end.
 5. The story must be LOGICAL and COHERENT — events follow cause and effect.
 6. The story must be INTERESTING and MEMORABLE — surprise the reader, make them feel something.
 7. Length: 100-300 English words. Not too short, not too long.
 8. Vocabulary words should feel like a NATURAL part of the story, not forced in.
-9. Try to connect the vocabulary words thematically — if the words share a theme, build the story around that theme.
+9. Use each word with CORRECT grammar — respect the word's part of speech (noun, verb, adjective, etc.).
 
 RESPONSE FORMAT:
 You must respond with ONLY a valid JSON object (no markdown code fences, no surrounding text):
 {
   "title": "An engaging English story title",
-  "content": "Full English story text with <vocab word=\"X\">X</vocab> tags around vocabulary words",
+  "content": "Full English story text with <vocab word=\\"X\\">X</vocab> tags around vocabulary words",
   "wordsUsed": ["word1", "word2", "word3"]
 }`;
 
@@ -63,7 +58,7 @@ Write me a complete, engaging English short story (100-300 words) that uses ALL 
 
 Remember:
 - 100-300 English words
-- Use ALL vocabulary words
+- Use ALL vocabulary words with CORRECT grammar and part of speech
 - Wrap each vocab word in <vocab word="...">...</vocab>
 - Make it a COMPLETE story with a satisfying ending
 - Make it fun to read — surprise me!
@@ -81,21 +76,34 @@ export async function generateStory(
   genre: StoryGenre,
   language: 'zh' | 'en' = 'en'
 ): Promise<GeneratedStory> {
-  if (!process.env.ANTHROPIC_API_KEY) {
+  if (!DEEPSEEK_API_KEY) {
     return generateMockStory(words, genre);
   }
 
-  const response = await client.messages.create({
-    model: 'claude-haiku-4-5-20251001',
-    max_tokens: 2000,
-    system: SYSTEM_PROMPT,
-    messages: [{ role: 'user', content: buildUserPrompt(words, genre) }],
+  const response = await fetch(`${DEEPSEEK_BASE}/chat/completions`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${DEEPSEEK_API_KEY}`,
+    },
+    body: JSON.stringify({
+      model: 'deepseek-chat',
+      messages: [
+        { role: 'system', content: SYSTEM_PROMPT },
+        { role: 'user', content: buildUserPrompt(words, genre) },
+      ],
+      max_tokens: 2000,
+      temperature: 0.8,
+    }),
   });
 
-  const text = response.content
-    .filter((block) => block.type === 'text')
-    .map((block) => (block as { type: 'text'; text: string }).text)
-    .join('\n');
+  if (!response.ok) {
+    const err = await response.text();
+    throw new Error(`DeepSeek API error: ${response.status} — ${err}`);
+  }
+
+  const data = await response.json();
+  const text = data.choices?.[0]?.message?.content || '';
 
   let cleaned = text.trim();
   cleaned = cleaned.replace(/^```json\s*/i, '').replace(/^```\s*/i, '').replace(/```\s*$/i, '').trim();
@@ -250,7 +258,7 @@ She never felt alone again.`,
   ],
   'daily-life': [
     {
-      title: 'Mrs. Chen\'s Garden',
+      title: "Mrs. Chen's Garden",
       template: (w) => `Every morning, Mrs. Chen would ${word(w[0])} her tiny garden with the same care her grandmother once taught her. The ${word(w[1])} roses were her pride and joy.
 
 Her neighbor Tom was a ${word(w[2])} businessman who never noticed the flowers. He rushed past them every day, phone in hand, ${word(w.length > 3 ? w[3] : w[0])} through life.
@@ -276,8 +284,6 @@ function generateMockStory(words: string[], genre: StoryGenre): GeneratedStory {
   const templates = MOCK_STORIES[genre];
   const template = templates[Math.floor(Math.random() * templates.length)];
 
-  // Ensure we report all words as used (in the template, extra words may not appear)
-  // So we build a best-effort usage list
   const content = template.template(words);
   const wordsUsed = words.filter((w) => content.includes(w));
 
