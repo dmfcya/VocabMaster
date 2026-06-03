@@ -1,4 +1,4 @@
-import { NavLink } from 'react-router-dom';
+import { NavLink, Link } from 'react-router-dom';
 import { cn } from '../../utils/cn';
 
 const navItems = [
@@ -11,12 +11,12 @@ export function Sidebar() {
   return (
     <aside className="hidden md:flex flex-col w-60 bg-white border-r border-slate-200 h-screen sticky top-0 shrink-0">
       {/* Logo */}
-      <div className="px-6 py-6 border-b border-slate-100">
+      <Link to="/" className="px-6 py-6 border-b border-slate-100 hover:bg-slate-50 transition-colors cursor-pointer">
         <h1 className="text-xl font-bold text-primary-600 tracking-tight">
           📚 VocabMaster
         </h1>
         <p className="text-xs text-slate-400 mt-1">AI 智能背单词</p>
-      </div>
+      </Link>
 
       {/* Navigation */}
       <nav className="flex-1 px-3 py-4 space-y-1">
