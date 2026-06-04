@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom';
 import type { NotebookWord } from '../../types/word';
 import { CATEGORY_LABELS, CATEGORY_COLORS } from '../../types/word';
 import { useNotebookStore } from '../../stores/useNotebookStore';
@@ -9,6 +10,7 @@ interface NotebookWordCardProps {
 }
 
 export function NotebookWordCard({ word, showCheckbox = false }: NotebookWordCardProps) {
+  const navigate = useNavigate();
   const removeWord = useNotebookStore((s) => s.removeWord);
   const toggleWordSelection = useNotebookStore((s) => s.toggleWordSelection);
   const selectedWordIds = useNotebookStore((s) => s.selectedWordIds);
@@ -16,10 +18,11 @@ export function NotebookWordCard({ word, showCheckbox = false }: NotebookWordCar
 
   return (
     <div
-      className={`bg-white rounded-xl border p-4 transition-all duration-200 ${
+      onClick={() => navigate(`/words/${word.wordId}`)}
+      className={`bg-white rounded-xl border p-4 transition-all duration-200 cursor-pointer ${
         isSelected
           ? 'border-primary-400 shadow-md ring-2 ring-primary-100'
-          : 'border-slate-200 hover:shadow-sm'
+          : 'border-slate-200 hover:shadow-md hover:border-primary-300'
       }`}
     >
       <div className="flex items-start justify-between">
@@ -29,7 +32,10 @@ export function NotebookWordCard({ word, showCheckbox = false }: NotebookWordCar
               <input
                 type="checkbox"
                 checked={isSelected}
-                onChange={() => toggleWordSelection(word.id)}
+                onChange={(e) => {
+                  e.stopPropagation();
+                  toggleWordSelection(word.id);
+                }}
                 className="w-4 h-4 rounded border-slate-300 text-primary-600 focus:ring-primary-500 cursor-pointer"
               />
             )}
@@ -47,8 +53,11 @@ export function NotebookWordCard({ word, showCheckbox = false }: NotebookWordCar
 
         {!showCheckbox && (
           <button
-            onClick={() => removeWord(word.id)}
-            className="text-slate-300 hover:text-red-500 transition-colors cursor-pointer p-1"
+            onClick={(e) => {
+              e.stopPropagation();
+              removeWord(word.id);
+            }}
+            className="text-slate-300 hover:text-red-500 transition-colors cursor-pointer p-1 shrink-0"
             title="移除"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

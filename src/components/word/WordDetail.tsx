@@ -1,6 +1,8 @@
+import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import type { Word } from '../../types/word';
 import { CATEGORY_LABELS, CATEGORY_COLORS } from '../../types/word';
+import { allWords } from '../../data/words';
 import { AddToNotebookButton } from './AddToNotebookButton';
 import { SpeakButton } from '../ui/SpeakButton';
 
@@ -10,6 +12,15 @@ interface WordDetailProps {
 
 export function WordDetail({ word }: WordDetailProps) {
   const navigate = useNavigate();
+
+  // Build a lookup map: lowercase word → Word object
+  const wordMap = useMemo(() => {
+    const map = new Map<string, Word>();
+    for (const w of allWords) {
+      map.set(w.word.toLowerCase(), w);
+    }
+    return map;
+  }, []);
 
   return (
     <div className="max-w-2xl mx-auto">
@@ -62,13 +73,28 @@ export function WordDetail({ word }: WordDetailProps) {
         {/* Synonyms */}
         {word.synonyms && word.synonyms.length > 0 && (
           <div>
-            <h3 className="text-sm font-medium text-slate-400 uppercase tracking-wide mb-2">近义词</h3>
+            <h3 className="text-sm font-medium text-slate-400 uppercase tracking-wide mb-2">近义词（点击跳转）</h3>
             <div className="flex flex-wrap gap-2">
-              {word.synonyms.map((syn) => (
-                <span key={syn} className="px-3 py-1 bg-primary-50 text-primary-700 rounded-full text-sm">
-                  {syn}
-                </span>
-              ))}
+              {word.synonyms.map((syn) => {
+                const matchedWord = wordMap.get(syn.toLowerCase());
+                if (matchedWord) {
+                  return (
+                    <button
+                      key={syn}
+                      onClick={() => navigate(`/words/${matchedWord.id}`)}
+                      className="px-3 py-1 bg-primary-50 text-primary-700 rounded-full text-sm hover:bg-primary-100 transition-colors cursor-pointer"
+                      title={`查看 ${syn} 的详情`}
+                    >
+                      {syn}
+                    </button>
+                  );
+                }
+                return (
+                  <span key={syn} className="px-3 py-1 bg-slate-50 text-slate-500 rounded-full text-sm">
+                    {syn}
+                  </span>
+                );
+              })}
             </div>
           </div>
         )}
