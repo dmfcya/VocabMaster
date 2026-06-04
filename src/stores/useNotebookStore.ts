@@ -12,7 +12,6 @@ interface NotebookStoreState {
   toggleWordSelection: (notebookId: string) => void;
   selectAll: () => void;
   deselectAll: () => void;
-  markAsReviewed: (notebookId: string) => void;
   getStats: () => { total: number; byCategory: Record<string, number> };
 }
 
@@ -72,17 +71,6 @@ export const useNotebookStore = create<NotebookStoreState>()(
 
       deselectAll: () => {
         set({ selectedWordIds: [] });
-      },
-
-      markAsReviewed: (notebookId: string) => {
-        const { words } = get();
-        set({
-          words: words.map((w) =>
-            w.id === notebookId
-              ? { ...w, reviewCount: w.reviewCount + 1, lastReviewedAt: Date.now() }
-              : w
-          ),
-        });
       },
 
       getStats: () => {
