@@ -24,6 +24,17 @@ export function WordLibraryPage() {
       );
     }
 
+    // Deduplicate by word name (case-insensitive) when showing all categories
+    if (activeCategory === 'all') {
+      const seen = new Set<string>();
+      words = words.filter((w) => {
+        const key = w.word.toLowerCase();
+        if (seen.has(key)) return false;
+        seen.add(key);
+        return true;
+      });
+    }
+
     return words;
   }, [activeCategory, query]);
 
