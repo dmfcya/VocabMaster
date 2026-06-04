@@ -18,7 +18,7 @@ export function WordList({ words }: WordListProps) {
   }
 
   return (
-    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 card-stagger">
       {words.map((word) => (
         <WordCard key={word.id} word={word} />
       ))}

@@ -19,12 +19,22 @@ export function showToast(message: string, type: ToastType = 'info') {
 
 export function useToast() {
   const [toasts, setToasts] = useState<ToastItem[]>([]);
+  const [leavingIds, setLeavingIds] = useState<Set<number>>(new Set());
 
   useEffect(() => {
     const handler = (toast: ToastItem) => {
       setToasts((prev) => [...prev, toast]);
+      // Start leave animation after 2.8s, remove after 3s
+      setTimeout(() => {
+        setLeavingIds((prev) => new Set(prev).add(toast.id));
+      }, 2800);
       setTimeout(() => {
         setToasts((prev) => prev.filter((t) => t.id !== toast.id));
+        setLeavingIds((prev) => {
+          const next = new Set(prev);
+          next.delete(toast.id);
+          return next;
+        });
       }, 3000);
     };
     listeners.push(handler);
@@ -34,7 +44,7 @@ export function useToast() {
     };
   }, []);
 
-  return toasts;
+  return { toasts, leavingIds };
 }
 
 const typeClasses: Record<ToastType, string> = {
@@ -50,7 +60,7 @@ const typeIcons: Record<ToastType, string> = {
 };
 
 export function ToastContainer() {
-  const toasts = useToast();
+  const { toasts, leavingIds } = useToast();
 
   if (toasts.length === 0) return null;
 
@@ -60,7 +70,8 @@ export function ToastContainer() {
         <div
           key={toast.id}
           className={cn(
-            'px-4 py-3 rounded-xl border shadow-lg text-sm font-medium animate-slide-in pointer-events-auto',
+            'px-4 py-3 rounded-xl border shadow-lg text-sm font-medium pointer-events-auto',
+            leavingIds.has(toast.id) ? 'animate-slide-out' : 'animate-slide-in',
             typeClasses[toast.type]
           )}
         >

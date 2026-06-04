@@ -3,11 +3,12 @@ import type { WordCategory } from '../../types/word';
 
 const categories: Array<{ key: WordCategory | 'all'; label: string }> = [
   { key: 'all', label: '全部' },
+  { key: 'gaokao', label: '高考' },
   { key: 'cet4', label: 'CET-4' },
   { key: 'cet6', label: 'CET-6' },
+  { key: 'kaoyan', label: '考研' },
   { key: 'ielts', label: 'IELTS' },
   { key: 'toefl', label: 'TOEFL' },
-  { key: 'kaoyan', label: '考研' },
   { key: 'gre', label: 'GRE' },
 ];
 
