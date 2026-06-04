@@ -42,3 +42,23 @@ export interface NotebookWord {
   lastReviewedAt: number | null;
   reviewCount: number;
 }
+
+export type MasteryLevel = 'new' | 'learning' | 'mastered';
+
+export const MASTERY_LABELS: Record<MasteryLevel, string> = {
+  new: '未复习',
+  learning: '学习中',
+  mastered: '已掌握',
+};
+
+export const MASTERY_COLORS: Record<MasteryLevel, string> = {
+  new: 'bg-slate-100 text-slate-600',
+  learning: 'bg-blue-100 text-blue-700',
+  mastered: 'bg-emerald-100 text-emerald-700',
+};
+
+export function getMastery(reviewCount: number): MasteryLevel {
+  if (reviewCount >= 3) return 'mastered';
+  if (reviewCount >= 1) return 'learning';
+  return 'new';
+}

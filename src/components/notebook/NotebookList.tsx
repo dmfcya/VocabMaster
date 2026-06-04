@@ -1,13 +1,20 @@
 import { useNotebookStore } from '../../stores/useNotebookStore';
 import { NotebookWordCard } from './NotebookWordCard';
+import { getMastery } from '../../types/word';
 
 export function NotebookList() {
   const words = useNotebookStore((s) => s.words);
 
   if (words.length === 0) return null;
 
-  // Sort by most recently added first
-  const sorted = [...words].sort((a, b) => b.addedAt - a.addedAt);
+  // Sort: unreviewed first, then by review count, then by date added
+  const masteryOrder = { new: 0, learning: 1, mastered: 2 };
+  const sorted = [...words].sort((a, b) => {
+    const ma = masteryOrder[getMastery(a.reviewCount)];
+    const mb = masteryOrder[getMastery(b.reviewCount)];
+    if (ma !== mb) return ma - mb;
+    return b.addedAt - a.addedAt;
+  });
 
   return (
     <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
