@@ -2,6 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import type { Word } from '../../types/word';
 import { CATEGORY_LABELS, CATEGORY_COLORS } from '../../types/word';
 import { AddToNotebookButton } from './AddToNotebookButton';
+import { SpeakButton } from '../ui/SpeakButton';
 
 interface WordDetailProps {
   word: Word;
@@ -27,7 +28,10 @@ export function WordDetail({ word }: WordDetailProps) {
       <div className="bg-white rounded-2xl border border-slate-200 p-6 md:p-8 shadow-sm">
         <div className="flex items-start justify-between mb-6">
           <div>
-            <h1 className="text-3xl font-bold text-slate-900 mb-2">{word.word}</h1>
+            <div className="flex items-center gap-2 mb-2">
+              <SpeakButton word={word.word} className="w-8 h-8 p-1.5" />
+              <h1 className="text-3xl font-bold text-slate-900">{word.word}</h1>
+            </div>
             <div className="flex items-center gap-3 text-sm text-slate-500">
               <span>{word.phonetic}</span>
               <span className="w-1 h-1 rounded-full bg-slate-300" />

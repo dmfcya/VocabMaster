@@ -1,6 +1,7 @@
 import type { NotebookWord } from '../../types/word';
 import { CATEGORY_LABELS, CATEGORY_COLORS } from '../../types/word';
 import { useNotebookStore } from '../../stores/useNotebookStore';
+import { SpeakButton } from '../ui/SpeakButton';
 
 interface NotebookWordCardProps {
   word: NotebookWord;
@@ -32,6 +33,7 @@ export function NotebookWordCard({ word, showCheckbox = false }: NotebookWordCar
                 className="w-4 h-4 rounded border-slate-300 text-primary-600 focus:ring-primary-500 cursor-pointer"
               />
             )}
+            <SpeakButton word={word.word} />
             <h3 className="font-semibold text-slate-900">{word.word}</h3>
             <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${CATEGORY_COLORS[word.category]}`}>
               {CATEGORY_LABELS[word.category]}

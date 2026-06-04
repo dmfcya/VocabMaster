@@ -2,6 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import { cn } from '../../utils/cn';
 import { type Word } from '../../types/word';
 import { AddToNotebookButton } from './AddToNotebookButton';
+import { SpeakButton } from '../ui/SpeakButton';
 
 interface WordCardProps {
   word: Word;
@@ -23,6 +24,7 @@ export function WordCard({ word, className }: WordCardProps) {
       <div className="flex items-start justify-between gap-2">
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-1">
+            <SpeakButton word={word.word} />
             <h3 className="text-lg font-semibold text-slate-900 truncate">
               {word.word}
             </h3>
