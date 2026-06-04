@@ -1,12 +1,23 @@
+import { lazy, Suspense } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { AppShell } from './components/layout/AppShell';
 import { HomePage } from './pages/HomePage';
-import { WordLibraryPage } from './pages/WordLibraryPage';
-import { WordDetailPage } from './pages/WordDetailPage';
-import { NotebookPage } from './pages/NotebookPage';
-import { StoryCreatePage } from './pages/StoryCreatePage';
-import { StoryViewPage } from './pages/StoryViewPage';
-import { NotFoundPage } from './pages/NotFoundPage';
+import { Spinner } from './components/ui/Spinner';
+
+const WordLibraryPage = lazy(() => import('./pages/WordLibraryPage').then(m => ({ default: m.WordLibraryPage })));
+const WordDetailPage = lazy(() => import('./pages/WordDetailPage').then(m => ({ default: m.WordDetailPage })));
+const NotebookPage = lazy(() => import('./pages/NotebookPage').then(m => ({ default: m.NotebookPage })));
+const StoryCreatePage = lazy(() => import('./pages/StoryCreatePage').then(m => ({ default: m.StoryCreatePage })));
+const StoryViewPage = lazy(() => import('./pages/StoryViewPage').then(m => ({ default: m.StoryViewPage })));
+const NotFoundPage = lazy(() => import('./pages/NotFoundPage').then(m => ({ default: m.NotFoundPage })));
+
+function PageLoader() {
+  return (
+    <div className="flex justify-center py-20">
+      <Spinner />
+    </div>
+  );
+}
 
 export default function App() {
   return (
@@ -14,12 +25,24 @@ export default function App() {
       <Routes>
         <Route element={<AppShell />}>
           <Route path="/" element={<HomePage />} />
-          <Route path="/words" element={<WordLibraryPage />} />
-          <Route path="/words/:wordId" element={<WordDetailPage />} />
-          <Route path="/notebook" element={<NotebookPage />} />
-          <Route path="/stories/new" element={<StoryCreatePage />} />
-          <Route path="/stories/:storyId" element={<StoryViewPage />} />
-          <Route path="*" element={<NotFoundPage />} />
+          <Route path="/words" element={
+            <Suspense fallback={<PageLoader />}><WordLibraryPage /></Suspense>
+          } />
+          <Route path="/words/:wordId" element={
+            <Suspense fallback={<PageLoader />}><WordDetailPage /></Suspense>
+          } />
+          <Route path="/notebook" element={
+            <Suspense fallback={<PageLoader />}><NotebookPage /></Suspense>
+          } />
+          <Route path="/stories/new" element={
+            <Suspense fallback={<PageLoader />}><StoryCreatePage /></Suspense>
+          } />
+          <Route path="/stories/:storyId" element={
+            <Suspense fallback={<PageLoader />}><StoryViewPage /></Suspense>
+          } />
+          <Route path="*" element={
+            <Suspense fallback={<PageLoader />}><NotFoundPage /></Suspense>
+          } />
         </Route>
       </Routes>
     </BrowserRouter>

@@ -1,8 +1,8 @@
-import { useMemo } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import type { Word } from '../../types/word';
 import { CATEGORY_LABELS, CATEGORY_COLORS } from '../../types/word';
-import { allWords } from '../../data/words';
+import { getWordMap, preloadWords } from '../../data/wordLoader';
 import { AddToNotebookButton } from './AddToNotebookButton';
 import { SpeakButton } from '../ui/SpeakButton';
 
@@ -12,14 +12,11 @@ interface WordDetailProps {
 
 export function WordDetail({ word }: WordDetailProps) {
   const navigate = useNavigate();
+  const [wordMap, setWordMap] = useState<Map<string, Word> | null>(null);
 
-  // Build a lookup map: lowercase word → Word object
-  const wordMap = useMemo(() => {
-    const map = new Map<string, Word>();
-    for (const w of allWords) {
-      map.set(w.word.toLowerCase(), w);
-    }
-    return map;
+  useEffect(() => {
+    getWordMap().then(setWordMap);
+    preloadWords(); // preload the rest in background
   }, []);
 
   return (
@@ -73,10 +70,12 @@ export function WordDetail({ word }: WordDetailProps) {
         {/* Synonyms */}
         {word.synonyms && word.synonyms.length > 0 && (
           <div>
-            <h3 className="text-sm font-medium text-slate-400 uppercase tracking-wide mb-2">近义词（点击跳转）</h3>
+            <h3 className="text-sm font-medium text-slate-400 uppercase tracking-wide mb-2">
+              近义词{wordMap ? '（点击跳转）' : ''}
+            </h3>
             <div className="flex flex-wrap gap-2">
               {word.synonyms.map((syn) => {
-                const matchedWord = wordMap.get(syn.toLowerCase());
+                const matchedWord = wordMap?.get(syn.toLowerCase());
                 if (matchedWord) {
                   return (
                     <button
