@@ -8,7 +8,7 @@ export function HomePage() {
     <div className="flex flex-col items-center justify-center py-8 md:py-24 px-4">
       {/* Hero */}
       <div className="text-center max-w-2xl">
-        <span className="text-5xl md:text-6xl mb-4 md:mb-6 block animate-float">📚</span>
+        <span className="text-5xl md:text-6xl mb-4 md:mb-6 block">📚</span>
         <h1 className="text-2xl md:text-5xl font-bold text-slate-900 mb-3 md:mb-4 tracking-tight">
           VocabMaster
         </h1>

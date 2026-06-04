@@ -49,35 +49,11 @@
 }
 .animate-page-enter { animation: page-enter 0.35s ease-out; }
 
-/* Card stagger fade-in + slide-up */
-@keyframes card-enter {
-  from { opacity: 0; transform: translateY(12px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-.card-stagger > * { opacity: 0; animation: card-enter 0.4s ease-out forwards; }
-.card-stagger > *:nth-child(1) { animation-delay: 0.05s; }
-.card-stagger > *:nth-child(2) { animation-delay: 0.10s; }
-.card-stagger > *:nth-child(3) { animation-delay: 0.15s; }
-.card-stagger > *:nth-child(4) { animation-delay: 0.20s; }
-.card-stagger > *:nth-child(5) { animation-delay: 0.25s; }
-.card-stagger > *:nth-child(6) { animation-delay: 0.30s; }
-.card-stagger > *:nth-child(7) { animation-delay: 0.35s; }
-.card-stagger > *:nth-child(8) { animation-delay: 0.40s; }
-.card-stagger > *:nth-child(9) { animation-delay: 0.45s; }
-.card-stagger > *:nth-child(n+10) { animation-delay: 0.50s; }
-
 /* Nav active indicator */
 @keyframes nav-indicator {
   from { transform: scaleX(0); }
   to { transform: scaleX(1); }
 }
-
-/* Hero float */
-@keyframes float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-6px); }
-}
-.animate-float { animation: float 3s ease-in-out infinite; }
 
 /* Scrollbar */
 ::-webkit-scrollbar { width: 6px; }
