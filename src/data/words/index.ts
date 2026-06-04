@@ -5,6 +5,7 @@ import { ieltsWords } from './ielts';
 import { toeflWords } from './toefl';
 import { kaoyanWords } from './kaoyan';
 import { greWords } from './gre';
+import { gaokaoWords } from './gaokao';
 
 export const allWords: Word[] = [
   ...cet4Words,
@@ -13,6 +14,7 @@ export const allWords: Word[] = [
   ...toeflWords,
   ...kaoyanWords,
   ...greWords,
+  ...gaokaoWords,
 ];
 
 export const wordsByCategory: Record<WordCategory, Word[]> = {
@@ -22,6 +24,7 @@ export const wordsByCategory: Record<WordCategory, Word[]> = {
   toefl: toeflWords,
   kaoyan: kaoyanWords,
   gre: greWords,
+  gaokao: gaokaoWords,
 };
 
-export { cet4Words, cet6Words, ieltsWords, toeflWords, kaoyanWords, greWords };
+export { cet4Words, cet6Words, ieltsWords, toeflWords, kaoyanWords, greWords, gaokaoWords };

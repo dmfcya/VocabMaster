@@ -65,26 +65,23 @@ interface WordOutput {
 
 // Config for each category
 const CONFIG: Record<string, { zip: string; category: string; varName: string; maxWords?: number }> = {
-  cet4: {
-    zip: '1523620217431_CET4luan_1.zip',
-    category: 'cet4',
-    varName: 'cet4Words',
+  gaokao: {
+    zip: 'GaoZhongluan_2.zip',
+    category: 'gaokao',
+    varName: 'gaokaoWords',
+    maxWords: 1500, // 高考必备词汇 3668 words, take top 1500
   },
-  cet6: {
-    zip: '1521164660466_CET6luan_1.zip',
-    category: 'cet6',
-    varName: 'cet6Words',
+  ielts: {
+    zip: 'IELTSluan_2.zip',
+    category: 'ielts',
+    varName: 'ieltsWords',
+    maxWords: 1500, // IELTS has 3427 words, take top 1500
   },
-  kaoyan: {
-    zip: '1521164661106_KaoYanluan_1.zip',
-    category: 'kaoyan',
-    varName: 'kaoyanWords',
-  },
-  gre: {
-    zip: '1521164637271_GRE_2.zip',
-    category: 'gre',
-    varName: 'greWords',
-    maxWords: 1500, // GRE has 7199 words, take top 1500 by wordRank
+  toefl: {
+    zip: 'TOEFL_2.zip',
+    category: 'toefl',
+    varName: 'toeflWords',
+    maxWords: 1500, // TOEFL has 9213 words, take top 1500
   },
 };
 

@@ -1,4 +1,4 @@
-export type WordCategory = 'cet4' | 'cet6' | 'ielts' | 'toefl' | 'kaoyan' | 'gre';
+export type WordCategory = 'cet4' | 'cet6' | 'ielts' | 'toefl' | 'kaoyan' | 'gre' | 'gaokao';
 
 export const CATEGORY_LABELS: Record<WordCategory, string> = {
   cet4: 'CET-4',
@@ -7,6 +7,7 @@ export const CATEGORY_LABELS: Record<WordCategory, string> = {
   toefl: 'TOEFL',
   kaoyan: '考研',
   gre: 'GRE',
+  gaokao: '高考',
 };
 
 export const CATEGORY_COLORS: Record<WordCategory, string> = {
@@ -16,6 +17,7 @@ export const CATEGORY_COLORS: Record<WordCategory, string> = {
   toefl: 'bg-orange-100 text-orange-800',
   kaoyan: 'bg-rose-100 text-rose-800',
   gre: 'bg-indigo-100 text-indigo-800',
+  gaokao: 'bg-amber-100 text-amber-800',
 };
 
 export interface Word {
