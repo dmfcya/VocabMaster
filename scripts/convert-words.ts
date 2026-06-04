@@ -64,24 +64,24 @@ interface WordOutput {
 }
 
 // Config for each category
-const CONFIG: Record<string, { zip: string; category: string; varName: string; maxWords?: number }> = {
+const CONFIG: Record<string, { zips: string[]; category: string; varName: string; maxWords?: number }> = {
   gaokao: {
-    zip: 'GaoZhongluan_2.zip',
+    zips: ['GaoZhongluan_2.zip', 'ChuZhongluan_2.zip'], // 高考必备 + 中考必备 → 日常高频全覆盖
     category: 'gaokao',
     varName: 'gaokaoWords',
-    maxWords: 1500, // 高考必备词汇 3668 words, take top 1500
+    // No maxWords — include all 5,000+ words
   },
   ielts: {
-    zip: 'IELTSluan_2.zip',
+    zips: ['IELTSluan_2.zip'],
     category: 'ielts',
     varName: 'ieltsWords',
-    maxWords: 1500, // IELTS has 3427 words, take top 1500
+    maxWords: 1500,
   },
   toefl: {
-    zip: 'TOEFL_2.zip',
+    zips: ['TOEFL_2.zip'],
     category: 'toefl',
     varName: 'toeflWords',
-    maxWords: 1500, // TOEFL has 9213 words, take top 1500
+    maxWords: 1500,
   },
 };
 
@@ -201,26 +201,43 @@ function main() {
   }
 
   for (const [key, cfg] of Object.entries(CONFIG)) {
-    const zipPath = path.join(TEMP_DIR, cfg.zip);
-    if (!fs.existsSync(zipPath)) {
-      console.error(`ZIP not found: ${zipPath}`);
+    // Read all ZIPs for this category
+    const allWords: SourceWord[] = [];
+    const seenWords = new Set<string>();
+
+    for (const zipFile of cfg.zips) {
+      const zipPath = path.join(TEMP_DIR, zipFile);
+      if (!fs.existsSync(zipPath)) {
+        console.error(`ZIP not found: ${zipPath}`);
+        continue;
+      }
+      console.log(`Reading ${zipFile}...`);
+      const lines = readZipLines(zipPath);
+      for (const line of lines) {
+        const word: SourceWord = JSON.parse(line);
+        const lower = word.headWord.toLowerCase();
+        if (!seenWords.has(lower)) {
+          seenWords.add(lower);
+          allWords.push(word);
+        }
+      }
+    }
+
+    if (allWords.length === 0) {
+      console.log(`  Skipped ${key} — no data found`);
       continue;
     }
 
-    console.log(`Processing ${key} (${cfg.zip})...`);
-    const lines = readZipLines(zipPath);
-    let words: SourceWord[] = lines.map(l => JSON.parse(l) as SourceWord);
-
     // Sort by wordRank (ascending = most important first)
-    words.sort((a, b) => a.wordRank - b.wordRank);
+    allWords.sort((a, b) => a.wordRank - b.wordRank);
 
     // Trim if maxWords specified
-    if (cfg.maxWords && words.length > cfg.maxWords) {
-      words = words.slice(0, cfg.maxWords);
-      console.log(`  Trimmed from ${lines.length} to ${cfg.maxWords} words (by wordRank)`);
+    if (cfg.maxWords && allWords.length > cfg.maxWords) {
+      console.log(`  Trimmed from ${allWords.length} to ${cfg.maxWords} words (by wordRank)`);
+      allWords.length = cfg.maxWords;
     }
 
-    const converted = words.map((w, i) => convertWord(w, cfg.category, i));
+    const converted = allWords.map((w, i) => convertWord(w, cfg.category, i));
     const tsContent = formatWordTs(converted, cfg.varName);
     const outPath = path.join(OUTPUT_DIR, `${key}.ts`);
     fs.writeFileSync(outPath, tsContent, 'utf-8');
